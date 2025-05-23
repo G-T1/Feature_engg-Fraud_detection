@@ -1,0 +1,33 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report
+
+# ✅ Sample fraud dataset creation
+np.random.seed(42)
+n = 200
+df = pd.read_csv(r"C:\Users\Gnan Tejas D\Downloads\fraud_detection.csv")
+
+# ✅ Preprocessing
+le = LabelEncoder()
+df['Type_encoded'] = le.fit_transform(df['Type'])
+
+# ✅ Feature Engineering (Optional: e.g., log of amount)
+df['Log_Amount'] = np.log(df['Amount'])
+
+# ✅ Features and target
+X = df[['Amount', 'Type_encoded', 'Log_Amount']]
+y = df['Is_Fraud']
+
+# ✅ Train-Test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# ✅ Model training
+model = DecisionTreeClassifier(max_depth=5, random_state=42)
+model.fit(X_train, y_train)
+
+# ✅ Evaluation
+y_pred = model.predict(X_test)
+print("Classification Report:\n", classification_report(y_test, y_pred))
